@@ -11,41 +11,20 @@
 # Marker to tell the VCL compiler that this VCL has been written with the
 # 4.0 or 4.1 syntax.
 vcl 4.1;
-
+import directors;    # load the directors
 # Default backend definition. Set this to point to your content server.
-backend nginx-a {
-    .host = "nginx-a";
-    .port = "80";
-}
+backend nginxa {.host = "nginx-a";}
+backend nginxb {.host = "nginx-b";}
+backend nginxc {.host = "nginx-c";}
 
-backend nginx-b {
-    .host = "nginx-b";
-    .port = "80";
-}
-
-backend nginx-c {
-    .host = "nginx-c";
-    .port = "80";
-}
-
-director load_balance round-robin {
-  {
-    .backend = nginx-a;
-  }
-  {
-    .backend = nginx-b;
-  }
-  {
-    .backend = nginx-c;
-  }
+sub vcl_init {
+    new bar = directors.round_robin();
+    bar.add_backend(nginxa);
+    bar.add_backend(nginxb);
+    bar.add_backend(nginxc);
 }
 
 sub vcl_recv {
-    set req.backend = load_balance;
-}
-
-sub vcl_backend_response {
-}
-
-sub vcl_deliver {
+    # send all traffic to the bar director:
+    set req.backend_hint = bar.backend();
 }
