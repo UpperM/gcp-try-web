@@ -5,7 +5,8 @@ Little try of deployment of HAProxy, Nginx and Varnish on GCP with Terraform
 ## How to Use
 
 ```sh
-git clone https://github.com/UpperM/gcp-try-web/gcp-try-web.git
+git clone https://github.com/UpperM/gcp-try-web.git
+cd gcp-try-web/terraform
 terraform init
 gcloud auth application-default login
 gcloud projects create gcp-try-web
